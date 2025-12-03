@@ -1,4 +1,135 @@
 
+import { apiServer } from './api/server';
+import { tradingEngine } from './engine/tradingEngine';
+import { priceFeedAggregator } from './market/priceFeeds';
+import { flashLoanEngine } from './flashloan/flashLoanEngine';
+import { walletManager } from './blockchain/wallet';
+import { blockchainProvider } from './blockchain/provider';
+import logger from './utils/logger';
+import { config } from './config';
+
+// Banner
+console.log(`
+\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
+\u2551                                                               \u2551
+\u2551   MASSIVE TRADING STRATEGY ENGINE                            \u2551
+\u2551   Ultra-High-Speed Trading with AI Optimization              \u2551
+\u2551                                                               \u2551
+\u2551   \u2022 1000+ Strategies Across All Risk Levels                  \u2551
+\u2551   \u2022 100,000+ Trades Per Second Capability                    \u2551
+\u2551   \u2022 AI-Powered Decision Making                               \u2551
+\u2551   \u2022 Flash Loan Opportunity Detection                         \u2551
+\u2551   \u2022 Multi-Chain Support                                      \u2551
+\u2551   \u2022 Real-Time Market Analysis                                \u2551
+\u2551                                                               \u2551
+\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
+`);
+
+async function initialize(): Promise<void> {
+  try {
+    logger.info('Initializing Massive Trading Engine...');
+
+    // Display configuration
+    logger.info('Configuration:', {
+      maxTradesPerSecond: config.trading.maxTradesPerSecond,
+      maxActiveStrategies: config.strategies.maxActiveStrategies,
+      enableFlashLoans: config.trading.enableFlashLoans,
+      enableAI: config.ai.enableOptimization,
+      environment: config.server.environment
+    });
+
+    // Check wallet
+    if (walletManager.isInitialized()) {
+      logger.info(`Wallet initialized: ${walletManager.getAddress()}`);
+      
+      // Get initial balances
+      const balances = await walletManager.getAllBalances();
+      logger.info('Initial balances:', balances);
+    } else {
+      logger.warn('Wallet not initialized - trading functionality limited');
+    }
+
+    // Check blockchain providers
+    const providerHealth = blockchainProvider.getHealthStatus();
+    logger.info('Blockchain provider health:', providerHealth);
+
+    // Start API server
+    apiServer.start();
+
+    logger.info('System initialized successfully');
+    logger.info(`API Server: http://localhost:${config.server.port}`);
+    logger.info(`WebSocket Server: ws://localhost:${config.server.wsPort}`);
+    logger.info('');
+    logger.info('Available endpoints:');
+    logger.info('  GET  /health                    - Health check');
+    logger.info('  GET  /api/status                - System status');
+    logger.info('  POST /api/start                 - Start trading engine');
+    logger.info('  POST /api/stop                  - Stop trading engine');
+    logger.info('  GET  /api/metrics               - Performance metrics');
+    logger.info('  GET  /api/strategies            - List strategies');
+    logger.info('  GET  /api/strategies/stats      - Strategy statistics');
+    logger.info('  GET  /api/prices                - Current prices');
+    logger.info('  GET  /api/arbitrage             - Arbitrage opportunities');
+    logger.info('  GET  /api/flashloans            - Flash loan opportunities');
+    logger.info('  GET  /api/wallet/balance        - Wallet balance');
+    logger.info('  GET  /api/ai/performance        - AI performance metrics');
+    logger.info('');
+    logger.info('Ready to start trading! Use POST /api/start to begin.');
+
+  } catch (error) {
+    logger.error('Failed to initialize system:', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+async function shutdown(): Promise<void> {
+  logger.info('Shutting down...');
+
+  try {
+    // Stop trading engine
+    if (tradingEngine.isEngineRunning()) {
+      await tradingEngine.stop();
+    }
+
+    // Stop flash loan scanning
+    flashLoanEngine.stopScanning();
+
+    // Stop price feeds
+    priceFeedAggregator.stop();
+
+    // Stop API server
+    apiServer.stop();
+
+    logger.info('Shutdown complete');
+    process.exit(0);
+  } catch (error) {
+    logger.error('Error during shutdown:', error);
+    process.exit(1);
+  }
+}
+
+// Handle process signals
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught exception:', error);
+  shutdown();
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled rejection at:', promise, 'reason:', reason);
+  shutdown();
+});
+
+// Start the system
+initialize().catch((error) => {
+  logger.error('Fatal error during initialization:', error);
+  process.exit(1);
+});
+
 import dotenv from 'dotenv';
 import { Config } from '../types';
 

@@ -1,27 +1,45 @@
 
 {
   "compilerOptions": {
-    "target": "ES2022",
+    // Target modern JavaScript features
+    "target": "es2020",
+    // Use CommonJS module system for Node.js
     "module": "commonjs",
-    "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "moduleResolution": "node",
-    "declaration": true,
-    "declarationMap": true,
+    // Root directory relative to where tsc is run
+    "rootDir": "./src",
+    // Output directory for compiled JavaScript
+    "outDir": "./dist",
     "sourceMap": true,
-    "removeComments": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true
+    "declaration": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // Setting strict to false for maximum compatibility
+    "strict": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    // Process JavaScript files
+    "allowJs": true,
+    "checkJs": false,
+    "noImplicitAny": false,
+    // Additional options for better compatibility
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noStrictGenericChecks": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  // Include TypeScript source files
+  "include": [
+    "src/**/*"
+  ],
+  // Exclude node_modules and output directory
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

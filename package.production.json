@@ -1,0 +1,76 @@
+scheduling build on Metal builder "builder-dwjhes"
+fetched snapshot sha256:97824c24c548e3036a40387a92ff970540a14a52e7882978515a895785e70237 (8.6 kB bytes)
+fetching snapshot
+8.4 KB
+61ms
+unpacking archive
+50 KB
+1ms
+using build driver railpack-v0.15.1
+                   
+╭─────────────────╮
+│ Railpack 0.15.1 │
+╰─────────────────╯
+ 
+  ↳ Detected Node
+  ↳ Using npm package manager
+  ↳ Found web command in Procfile
+            
+  Packages  
+  ──────────
+  node  │  18.20.8  │  package.json > engines > node (>=18.0.0)
+            
+  Steps     
+  ──────────
+  ▸ install
+    $ npm install
+         
+  ▸ build
+    $ npm run build
+            
+  Deploy    
+  ──────────
+    $ npm start
+ 
+
+load build definition from ./railpack-plan.json
+0ms
+
+install apt packages: libatomic1 cached
+0ms
+
+copy /root/.local/state/mise, /etc/mise/config.toml, /mise/shims, /mise/installs cached
+0ms
+
+install mise packages: node cached
+0ms
+
+copy /usr/local/bin/mise, / /app cached
+1s
+
+npm install cached
+0ms
+
+copy package.json cached
+0ms
+
+mkdir -p /app/node_modules/.cache cached
+0ms
+
+npm run build
+4s
+npm warn config production Use `--omit=dev` instead.
+> massive-trading-engine-flashbots@1.0.0 prebuild
+> npm install
+npm warn config production Use `--omit=dev` instead.
+up to date, audited 271 packages in 2s
+3 high severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> massive-trading-engine-flashbots@1.0.0 build
+> npx tsc
+npm warn config production Use `--omit=dev` instead.
+error TS18003: No inputs were found in config file '/app/tsconfig.json'. Specified 'include' paths were '["index.js","mev_backend.js"]' and 'exclude' paths were '["node_modules","dist"]'.
+
+Build Failed: build daemon returned an error < failed to solve: process "npm run build" did not complete successfully: exit code: 2 >
